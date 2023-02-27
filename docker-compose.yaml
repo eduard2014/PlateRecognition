@@ -1,0 +1,32 @@
+version: '3.9'
+services:
+  jupyter:
+    image: 'earias/nvidia/jupyter:23.01-tf2-py3-jp6'
+    build: 
+      context: ./jupyter
+      args:    
+        - UID
+        - GID
+    ports:
+      - '8888:8888'
+    #privileged: true
+    volumes:
+      - ${LOCAL_WORKING_DIR}:/home/jupyter/notebook
+      - ${LOCAL_DATASETS}:/datasets:ro
+      - ${LOCAL_SSL_CERTS}:/etc/ssl/notebook:ro
+      - /dev/video0:/dev/video0
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    environment:
+      - DISPLAY=unix$DISPLAY       
+    shm_size: '1g'
+    ulimits:
+      memlock: '-1'
+      stack: '67108864'  
+    deploy:
+      resources:
+        reservations:
+          devices:
+              - driver: nvidia
+                capabilities: [gpu]
+                count: all
+    command: jupyter lab --no-browser --ip 0.0.0.0 --port 8888 --certfile=/etc/ssl/notebook/jupyter.crt --keyfile /etc/ssl/notebook/jupyter.key --ServerApp.password='${ACCESS_TOKEN}' /home/jupyter/notebook/

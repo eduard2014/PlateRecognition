@@ -1,0 +1,9 @@
+# Ignora los archivos relacionados a entorno
+.env
+
+# Ignora DataSet
+notebook/data
+notebook/.Trash*
+notebook/.ipynb_checkpoints
+notebook/.virtual_documents
+notebook/training
